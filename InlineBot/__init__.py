@@ -15,7 +15,7 @@ OWNER_ID = int(os.environ.get('OWNER_ID'))
 CUSTOM_START_MESSAGE = os.environ.get('START_MESSAGE','')
 FILTER_COMMAND = os.environ.get('FILTER_COMMAND', 'add')
 DELETE_COMMAND = os.environ.get('DELETE_COMMAND', 'del')
-IS_PUBLIC = True if os.environ.get('IS_PUBLIC', 'True').lower() != 'false' else False
+IS_PUBLIC = os.environ.get('IS_PUBLIC', 'True').lower() != 'false'
 try:
     ADMINS=[OWNER_ID]
     for x in (os.environ.get("ADMINS", "").split()):
@@ -98,10 +98,7 @@ def is_owner(_, __, update):
     except:
         return False
 
-    if user_id == OWNER_ID:
-        return True
-    else:
-        return False
+    return user_id == OWNER_ID
 
 def is_admin(_, __, update):
     try:
@@ -109,22 +106,14 @@ def is_admin(_, __, update):
     except:
         return False
 
-    if user_id in ADMINS:
-        return True
-    else:
-        return False
+    return user_id in ADMINS
 def check_inline(_, __, update):
     try:
         user_id = update.from_user.id
     except:
         return False
 
-    if IS_PUBLIC:
-        return True
-    elif user_id in ADMINS:
-        return True
-    else:
-        return False
+    return bool(IS_PUBLIC or user_id in ADMINS)
 
 filters.admins = filters.create(is_admin)
 filters.owner = filters.create(is_owner)

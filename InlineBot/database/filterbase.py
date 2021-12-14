@@ -50,8 +50,7 @@ async def get_all_filters():
     return texts
 
 async def count_filters():
-    count = filter_collection.find().count()
-    return count
+    return filter_collection.find().count()
 
 async def del_all(message):
     
@@ -63,7 +62,7 @@ async def del_all(message):
         filter_collection.remove()
         await message.edit_text("All filters deleted.!")
     except:
-        await message.edit_text(f"Couldn't remove all of your filters")
+        await message.edit_text("Couldn't remove all of your filters")
         return
 
 async def get_filters(text):
@@ -102,36 +101,36 @@ async def get_status():
     document = 0
     animation = 0
     sticker = 0
-    voice = 0 
+    voice = 0
     videonote = 0 
-    
+
     for filter in filters:
         type = filter['type']
-        if type == 'Text':
-            text += 1 
-        elif type == 'Photo':
-            photo += 1 
-        elif type == 'Video':
-            video += 1 
+        if type == 'Animation':
+            animation += 1
         elif type == 'Audio':
-            audio += 1 
+            audio += 1
         elif type == 'Document':
             document += 1
-        elif type == 'Animation':
-            animation += 1
+        elif type == 'Photo':
+            photo += 1
         elif type == 'Sticker':
-            sticker += 1 
-        elif type == 'Voice':
-            voice += 1
+            sticker += 1
+        elif type == 'Text':
+            text += 1
         elif type == 'Video Note':
             videonote += 1 
 
+        elif type == 'Video':
+            video += 1
+        elif type == 'Voice':
+            voice += 1
         filters_no += 1
-    
+
     user_collection = database['users']
     no_users = user_collection.find().count()
-    
-    stats_text = f"""<b>Statistics</b>
+
+    return f"""<b>Statistics</b>
     
 Total users: {no_users}
 Total filters: {filters_no}
@@ -144,5 +143,3 @@ Animation filters: {animation}
 Sticker filters: {sticker}
 Voice filters: {voice}
 Video Note filters: {videonote}"""
-
-    return stats_text

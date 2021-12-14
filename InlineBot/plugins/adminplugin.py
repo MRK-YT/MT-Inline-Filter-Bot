@@ -61,14 +61,14 @@ async def broadcast_confrm(client: CodeXBotz, query):
 
     message = query.message.reply_to_message
     user_ids = await get_users()
-    
+
     success = 0
     deleted = 0
     blocked = 0
     peerid = 0
-    
+
     await query.message.edit(text = 'Broadcasting message, Please wait', reply_markup = None)
-    
+
     for user_id in user_ids:
         try:
             await message.copy(user_id)
@@ -84,13 +84,9 @@ async def broadcast_confrm(client: CodeXBotz, query):
         except InputUserDeactivated:
             deleted += 1
             await del_from_userbase(user_id)
-            
-    text = f"""<b>Broadcast Completed</b>
-    
-Total users: {str(len(user_ids))}
-Blocked users: {str(blocked)}
-Deleted accounts: {str(deleted)} (<i>Deleted from Database</i>)
-Failed : {str(peerid)}"""
+
+    text = f'<b>Broadcast Completed</b>\x1f    \x1fTotal users: {len(user_ids)}\x1fBlocked users: {blocked}\x1fDeleted accounts: {deleted} (<i>Deleted from Database</i>)\x1fFailed : {peerid}'
+
 
     await query.message.reply(text)
     await query.message.delete()

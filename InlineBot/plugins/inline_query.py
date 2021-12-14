@@ -38,56 +38,64 @@ async def give_filter(client: CodeXBotz, query: InlineQuery):
 
         if button == "[]":
             button = None
-        
+
         if reply_text:
             reply_text = reply_text.replace("\\n", "\n").replace("\\t", "\t")
-            
+
         if fileid == 'None':
             try:
                 result = InlineQueryResultArticle(
                     title=keyword.upper(),
-                    input_message_content=InputTextMessageContent(message_text = reply_text, disable_web_page_preview = True,
-                        parse_mode = 'html'),
+                    input_message_content=InputTextMessageContent(
+                        message_text=reply_text,
+                        disable_web_page_preview=True,
+                        parse_mode='html',
+                    ),
                     description='Text',
-                    thumb_url = thumb,
-                    reply_markup= None if button ==  None else InlineKeyboardMarkup(eval(button))
+                    thumb_url=thumb,
+                    reply_markup=None
+                    if button is None
+                    else InlineKeyboardMarkup(eval(button)),
                 )
+
             except:
                 continue
         elif msg_type == 'Photo':
             try:
                 result = InlineQueryResultPhoto(
-                    photo_url = fileid,
-                    title = keyword.upper(),
-                    description = 'Photo',
-                    parse_mode = 'html',
-                    caption = reply_text or '',
-                    reply_markup= None if button ==  None else InlineKeyboardMarkup(eval(button))
+                    photo_url=fileid,
+                    title=keyword.upper(),
+                    description='Photo',
+                    parse_mode='html',
+                    caption=reply_text or '',
+                    reply_markup=None
+                    if button is None
+                    else InlineKeyboardMarkup(eval(button)),
                 )
+
             except:
                 continue
         elif fileid:
             try:
                 result = InlineQueryResultCachedDocument(
-                    title = keyword.upper(),
-                    file_id = fileid,
-                    caption = reply_text or "",
-                    parse_mode = 'html',
-                    description = msg_type,
-                    reply_markup= None if button ==  None else InlineKeyboardMarkup(eval(button))
+                    title=keyword.upper(),
+                    file_id=fileid,
+                    caption=reply_text or "",
+                    parse_mode='html',
+                    description=msg_type,
+                    reply_markup=None
+                    if button is None
+                    else InlineKeyboardMarkup(eval(button)),
                 )
+
             except:
                 continue
         else:
             continue
 
         results.append(result)
-        
-    if len(results) != 0:
-        switch_pm_text = f"Total {len(results)} Matches"
-    else:
-        switch_pm_text = "No matches"
 
+    switch_pm_text = f"Total {len(results)} Matches" if results else "No matches"
     await query.answer(
         results = results,
         is_personal = True,

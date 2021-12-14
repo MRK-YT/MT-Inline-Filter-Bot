@@ -33,15 +33,15 @@ async def new_filter(client: CodeXBotz, message: Message):
 
     strid = str(uuid.uuid4())
     args = message.text.html.split(None, 1)
-    
+
     if len(args) < 2:
         await message.reply_text("Use Correct format 😐", quote=True)
         return
-    
+
     extracted = split_quotes(args[1])
     text = extracted[0].lower()
     msg_type = 'Text'
-   
+
     if not message.reply_to_message and len(extracted) < 2:
         await message.reply_text("Add some content to save your filter!", quote=True)
         return
@@ -82,15 +82,15 @@ async def new_filter(client: CodeXBotz, message: Message):
                     msg_type = 'Video Note'
 
                 reply_text = message.reply_to_message.caption.html
-            
+
             elif replied.photo:
                 fileid = await upload_photo(replied)
                 msg_type = 'Photo'
                 if not fileid:
                     return
                 reply_text = message.reply_to_message.caption.html
-            
-                    
+
+
             elif replied.text:
                 reply_text = message.reply_to_message.text.html
                 msg_type = 'Text'
@@ -101,7 +101,7 @@ async def new_filter(client: CodeXBotz, message: Message):
             alert = None
         except:
             pass
-            
+
 
     elif message.reply_to_message and message.reply_to_message.photo:
         try:
@@ -134,7 +134,7 @@ async def new_filter(client: CodeXBotz, message: Message):
             btn = []
             alert = None
         msg_type = 'Audio'
-   
+
     elif message.reply_to_message and message.reply_to_message.document:
         try:
             fileid = message.reply_to_message.document.file_id
@@ -194,7 +194,7 @@ async def new_filter(client: CodeXBotz, message: Message):
     else:
         await message.reply('Not Supported..!')
         return
-    
+
     try:
         if fileid:
             if msg_type == 'Photo':
@@ -217,7 +217,10 @@ async def new_filter(client: CodeXBotz, message: Message):
             )
     except Exception as a:
         try:
-            await message.reply(text = f"<b>❌ Error</b>\n\n{str(a)}\n\n<i>Join @CodeXBotzSupport for Support</i>")
+            await message.reply(
+                text=f'<b>❌ Error</b>\n\n{a}\n\n<i>Join @CodeXBotzSupport for Support</i>'
+            )
+
         except:
             pass
         return
@@ -270,7 +273,7 @@ async def get_all(client: CodeXBotz, message: Message):
                 await sts.delete()
             return
     else:
-        filterlist = f"<b>Bot have no filters.!</b>"
+        filterlist = '<b>Bot have no filters.!</b>'
 
     await message.reply_text(
         text=filterlist,
@@ -288,9 +291,9 @@ async def delallconfirm(client, message):
         ]
     )
     await message.reply_text(
-        f"This will delete all of your filters.\nAre you sure you want do this.?",
-        reply_markup = reply_markup,
-        quote=True
+        'This will delete all of your filters.\nAre you sure you want do this.?',
+        reply_markup=reply_markup,
+        quote=True,
     )
     
 @CodeXBotz.on_callback_query(filters.regex("^delall$") & filters.owner)

@@ -66,12 +66,15 @@ async def start_msg_admins(client: CodeXBotz, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(start_keyboard_c)
     text = START_MESSAGE.format(
-        mention = message.from_user.mention,
-        first_name = message.from_user.first_name,
-        last_name = message.from_user.last_name,
-        user_id = message.from_user.id,
-        username = '' if message.from_user.username == None else '@'+message.from_user.username
+        mention=message.from_user.mention,
+        first_name=message.from_user.first_name,
+        last_name=message.from_user.last_name,
+        user_id=message.from_user.id,
+        username=''
+        if message.from_user.username is None
+        else '@' + message.from_user.username,
     )
+
 
     await message.reply(
         text = text,

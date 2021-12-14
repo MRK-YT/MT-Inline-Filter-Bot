@@ -10,13 +10,13 @@ from InlineBot import (
     CUSTOM_START_MESSAGE
 )
 
-if CUSTOM_START_MESSAGE:
-    START_MESSAGE = CUSTOM_START_MESSAGE
-else:
-    START_MESSAGE = """<b>Hello {mention},
+START_MESSAGE = (
+    CUSTOM_START_MESSAGE
+    or """<b>Hello {mention},
 
 I am an Inline Saver Bot, you can save inline filters and It can be use in any of your chats easily, Click help for more details</b> 
 """
+)
 
 HELP_MESSAGE = f"""<b><u>Main Available Commands</u></b>
 

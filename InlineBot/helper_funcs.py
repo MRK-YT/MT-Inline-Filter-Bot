@@ -16,25 +16,24 @@ SMART_CLOSE = '”'
 START_CHAR = ('\'', '"', SMART_OPEN)
 
 def split_quotes(text: str) -> List:
-    if any(text.startswith(char) for char in START_CHAR):
-        counter = 1
-        while counter < len(text):
-            if text[counter] == "\\":
-                counter += 1
-            elif text[counter] == text[0] or (text[0] == SMART_OPEN and text[counter] == SMART_CLOSE):
-                break
+    if not any(text.startswith(char) for char in START_CHAR):
+        return text.split(None, 1)
+    counter = 1
+    while counter < len(text):
+        if text[counter] == "\\":
             counter += 1
-        else:
-            return text.split(None, 1)
-
-        key = remove_escapes(text[1:counter].strip())
-        
-        rest = text[counter + 1:].strip()
-        if not key:
-            key = text[0] + text[0]
-        return list(filter(None, [key, rest]))
+        elif text[counter] == text[0] or (text[0] == SMART_OPEN and text[counter] == SMART_CLOSE):
+            break
+        counter += 1
     else:
         return text.split(None, 1)
+
+    key = remove_escapes(text[1:counter].strip())
+
+    rest = text[counter + 1:].strip()
+    if not key:
+        key = text[0] + text[0]
+    return list(filter(None, [key, rest]))
         
 def replace_href(text):
     regex = r"(.*)\[(.*)\]\((.*)\)(.*)"
@@ -55,13 +54,13 @@ def remove_md(text):
     for item, tag in lists.items():
         i = 2
         while i:
-          text = text.replace(item,tag[i%2],1)
-          i +=1
-          if not (item in text):
-              if i%2:
-                  text = text[::-1].replace(tag[0][::-1],item[::-1],1)[::-1]
-              text = text.replace(f"{tag[0]}{tag[1]}",f"{item}{item}")
-              i = 0
+            text = text.replace(item,tag[i%2],1)
+            i +=1
+            if item not in text:
+                if i%2:
+                    text = text[::-1].replace(tag[0][::-1],item[::-1],1)[::-1]
+                text = text.replace(f"{tag[0]}{tag[1]}",f"{item}{item}")
+                i = 0
     text = replace_href(text.replace('\n','\t')).replace('\t','\n')
     return text
 
@@ -122,10 +121,9 @@ def generate_button(text : str, id : str):
     return text,btns,datalist
 
 def remove_escapes(text: str) -> str:
-    counter = 0
     res = ""
     is_escaped = False
-    while counter < len(text):
+    for counter in range(len(text)):
         if is_escaped:
             res += text[counter]
             is_escaped = False
@@ -133,7 +131,6 @@ def remove_escapes(text: str) -> str:
             is_escaped = True
         else:
             res += text[counter]
-        counter += 1
     return res
 
 async def upload_photo(message):
@@ -158,23 +155,25 @@ async def upload_photo(message):
 
 def make_dict(data_list : List[dict], keywords : List[str]):
     dict_list = []
-    for i in range(len(data_list)):
-        if data_list[i]['text'] in keywords:
+    for data in data_list:
+        if data['text'] in keywords:
             continue
 
         new_id = str(uuid.uuid4())
-        old_id = data_list[i]['_id']
+        old_id = data['_id']
 
-        new_data = {'_id': new_id}
-        new_data['text'] = data_list[i]['text']
-        new_data['reply'] = data_list[i]['reply']
-        new_data['file'] = data_list[i]['file']
-        new_data['alert'] = data_list[i]['alert']
-        new_data['type'] = data_list[i]['type']
+        new_data = {
+            '_id': new_id,
+            'text': data['text'],
+            'reply': data['reply'],
+            'file': data['file'],
+            'alert': data['alert'],
+            'type': data['type'],
+        }
 
-        button_text = data_list[i]['btn']
+        button_text = data['btn']
         new_data['btn'] = button_text.replace(old_id, str(new_id))
-        
+
         dict_list.append(new_data)
 
     return dict_list
